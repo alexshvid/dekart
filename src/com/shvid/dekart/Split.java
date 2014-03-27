@@ -1,6 +1,6 @@
 package com.shvid.dekart;
 
-public class Split<X extends Comparable<X>, Y extends Comparable<Y>, C> {
+public final class Split<X extends Comparable<X>, Y extends Comparable<Y>, C> {
 
 	private final Treap<X, Y, C> lesser;
 	private final Treap<X, Y, C> greater;  

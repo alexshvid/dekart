@@ -27,23 +27,40 @@ public final class Treap<X extends Comparable<X>, Y extends Comparable<Y>, C> {
 		this.right = right;
 	}
 	
+	public Treap<X, Y, C> put(X x, Y y, C c, boolean unique) {
+		
+		Treap<X, Y, C> el = new Treap<X, Y, C>(x, y, c);
+		
+		Split<X, Y, C> split = split(x, unique);
+		
+		return merge(merge(split.getLesser(), el), split.getGreater());
+		
+	}
+	
 	public static <X extends Comparable<X>, Y extends Comparable<Y>, C> Treap<X, Y, C> merge(Treap<X, Y, C> less, Treap<X, Y, C> greater) {
 	    if (less == null) return greater;
 	    if (greater == null) return less;
 
-	    if (less.y.compareTo(greater.y) > 0) {
+	    int c = less.y.compareTo(greater.y);
+	    
+	    if (c >= 0) {
 	        return new Treap<X, Y, C>(less, less.left, merge(less.right, greater));
 	    }
 	    else {
-	        return new Treap<X, Y, C>(greater, merge(less, greater.left), less.right);
+	        return new Treap<X, Y, C>(greater, merge(less, greater.left), greater.right);
 	    }
 	}
 	
-	public Split<X, Y, C> split(X x0) {
+	public Split<X, Y, C> split(X x0, boolean deleteEquals) {
 		
-		if (this.x.compareTo(x0) <= 0) {
+		int c = this.x.compareTo(x0);
+		
+		if (c == 0 && deleteEquals) {
+			return new Split<X, Y, C>(this.left, this.right);
+		}
+		else if (c <= 0) {
 			
-			Split<X, Y, C> rightSplit = this.right != null ? this.right.split(x0) : null;
+			Split<X, Y, C> rightSplit = this.right != null ? this.right.split(x0, deleteEquals) : null;
 			
 			Treap<X, Y, C> rightLesserX = rightSplit != null ? rightSplit.getLesser() : null;
 			Treap<X, Y, C> rightGreaterX = rightSplit != null ? rightSplit.getGreater() : null;
@@ -53,7 +70,7 @@ public final class Treap<X extends Comparable<X>, Y extends Comparable<Y>, C> {
 		}
 		else {
 			
-			Split<X, Y, C> leftSplit = this.left != null ? this.left.split(x0) : null;
+			Split<X, Y, C> leftSplit = this.left != null ? this.left.split(x0, deleteEquals) : null;
 			
 			Treap<X, Y, C> leftLesserX = leftSplit != null ? leftSplit.getLesser() : null;
 			Treap<X, Y, C> leftGreaterX = leftSplit != null ? leftSplit.getGreater() : null;
@@ -64,16 +81,31 @@ public final class Treap<X extends Comparable<X>, Y extends Comparable<Y>, C> {
 	
 	}
 	
-	public void print(PrintStream ps, String prefix) {
-		ps.println(prefix + "Treap " + this.hashCode() + ", x = " + x + ", y = " + y + ", c = " + c);
+	public void print(PrintStream ps) {
+		
+		ps.println("digraph {");
+		
+		doPrint(ps);
+		
+		ps.println("}");
+		
+	}
+	
+	private String doPrint(PrintStream ps) {
 
-		if (left != null) {
-			left.print(ps, "l    ");
+		String title = "\"" + x + ":" + y + ":" + c + "\"";
+
+		String leftChild = left != null ? left.doPrint(ps) : null;
+		String rightChild = right != null ? right.doPrint(ps) : null;
+
+		if (leftChild != null) {
+			ps.println(title + " -> " + leftChild);
 		}
 
-		if (right != null) {
-			right.print(ps, "r    ");
+		if (rightChild != null) {
+			ps.println(title + " -> " + rightChild);
 		}
 
+		return title;
 	}
 }
