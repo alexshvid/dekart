@@ -2,25 +2,25 @@ package com.shvid.dekart;
 
 public final class Split<X extends Comparable<X>, Y extends Comparable<Y>, C> {
 
-	private final Treap<X, Y, C> lesser;
-	private final Treap<X, Y, C> greater;  
-	private final Treap<X, Y, C> deleted;
+	private final ImmutableTreap<X, Y, C> lesser;
+	private final ImmutableTreap<X, Y, C> greater;  
+	private final ImmutableTreap<X, Y, C> deleted;
 	
-	public Split(Treap<X, Y, C> lesser, Treap<X, Y, C> greater, Treap<X, Y, C> deleted) {
+	public Split(ImmutableTreap<X, Y, C> lesser, ImmutableTreap<X, Y, C> greater, ImmutableTreap<X, Y, C> deleted) {
 		this.lesser = lesser;
 		this.greater = greater;
 		this.deleted = deleted;
 	}
 
-	public Treap<X, Y, C> getLesser() {
+	public ImmutableTreap<X, Y, C> getLesser() {
 		return lesser;
 	}
 
-	public Treap<X, Y, C> getGreater() {
+	public ImmutableTreap<X, Y, C> getGreater() {
 		return greater;
 	}
 
-	public Treap<X, Y, C> getDeleted() {
+	public ImmutableTreap<X, Y, C> getDeleted() {
 		return deleted;
 	}
 

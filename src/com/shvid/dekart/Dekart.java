@@ -8,11 +8,11 @@ public class Dekart {
 		
 		System.out.println("Dekart");
 		
-		Treap<Integer, Integer, String> treap1 = new Treap<Integer, Integer, String>(5, 500, "hello");
-		Treap<Integer, Integer, String> treap2 = new Treap<Integer, Integer, String>(7, 1000, "world");
-		Treap<Integer, Integer, String> treap3 = new Treap<Integer, Integer, String>(10, 10, "!");
+		ImmutableTreap<Integer, Integer, String> treap1 = new ImmutableTreap<Integer, Integer, String>(5, 500, "hello");
+		ImmutableTreap<Integer, Integer, String> treap2 = new ImmutableTreap<Integer, Integer, String>(7, 1000, "world");
+		ImmutableTreap<Integer, Integer, String> treap3 = new ImmutableTreap<Integer, Integer, String>(10, 10, "!");
 		
-		Treap<Integer, Integer, String> treapR = Treap.merge(Treap.merge(treap1, treap2), treap3);
+		ImmutableTreap<Integer, Integer, String> treapR = ImmutableTreap.merge(ImmutableTreap.merge(treap1, treap2), treap3);
 		
 		treapR.print(System.out);
 		
@@ -35,9 +35,9 @@ public class Dekart {
 	
 	public static void putAll(Random random) {
 		
-		Treap<Integer, Integer, String> treap = new Treap<Integer, Integer, String>(7, 555, "first");
+		ImmutableTreap<Integer, Integer, String> treap = new ImmutableTreap<Integer, Integer, String>(7, 555, "first");
 
-		for (int i = 0; i != 5; ++i) {
+		for (int i = 0; i != 20; ++i) {
 			int y = random.nextInt(1000);
 			treap = treap.put(i, y, "loop" + i, false);
 		}
@@ -47,27 +47,7 @@ public class Dekart {
 		
 		treap.print(System.out);
 		
-		System.out.println("2 = " + treap.get(2));
-		treap = treap.remove(2);
-		treap.print(System.out);
-		
-		System.out.println("2 = " + treap.get(2));
-		treap = treap.remove(2);
-		treap.print(System.out);
-		
-		System.out.println("2 = " + treap.get(2));
-		treap = treap.remove(2);
-		
-		treap.print(System.out);
-		System.out.println("2 = " + treap.get(2));
-		
-		System.out.println("T = " + treap);
-		treap = treap.remove(2);
-		System.out.println("T = " + treap);
-		
-		treap.print(System.out);
-		
-		System.out.println("2 = " + treap.get(2));
+
 		
 	}
 	

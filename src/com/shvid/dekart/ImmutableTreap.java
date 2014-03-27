@@ -2,16 +2,16 @@ package com.shvid.dekart;
 
 import java.io.PrintStream;
 
-public final class Treap<X extends Comparable<X>, Y extends Comparable<Y>, C> {
+public final class ImmutableTreap<X extends Comparable<X>, Y extends Comparable<Y>, C> {
 
 	private final X x;
 	private final Y y;
 	private final C c;
 	
-	private final Treap<X, Y, C> left;
-	private final Treap<X, Y, C> right;  
+	private final ImmutableTreap<X, Y, C> left;
+	private final ImmutableTreap<X, Y, C> right;  
 	
-	public Treap(X x, Y y, C c) {
+	public ImmutableTreap(X x, Y y, C c) {
 		this.x = x;
 		this.y = y;
 		this.c = c;
@@ -19,7 +19,7 @@ public final class Treap<X extends Comparable<X>, Y extends Comparable<Y>, C> {
 		this.right = null;
 	}
 	
-	public Treap(Treap<X, Y, C> top, Treap<X, Y, C> left, Treap<X, Y, C> right) {
+	public ImmutableTreap(ImmutableTreap<X, Y, C> top, ImmutableTreap<X, Y, C> left, ImmutableTreap<X, Y, C> right) {
 		this.x = top.x;
 		this.y = top.y;
 		this.c = top.c;
@@ -27,13 +27,13 @@ public final class Treap<X extends Comparable<X>, Y extends Comparable<Y>, C> {
 		this.right = right;
 	}
 	
-	public Treap<X, Y, C> get(X x) {
+	public ImmutableTreap<X, Y, C> get(X x) {
 		return search(x);
 	}
 	
-	public Treap<X, Y, C> put(X x, Y y, C c, boolean unique) {
+	public ImmutableTreap<X, Y, C> put(X x, Y y, C c, boolean unique) {
 		
-		Treap<X, Y, C> el = new Treap<X, Y, C>(x, y, c);
+		ImmutableTreap<X, Y, C> el = new ImmutableTreap<X, Y, C>(x, y, c);
 		
 		Split<X, Y, C> split = split(x, unique);
 		
@@ -41,7 +41,7 @@ public final class Treap<X extends Comparable<X>, Y extends Comparable<Y>, C> {
 		
 	}
 	
-	public Treap<X, Y, C> remove(X x) {
+	public ImmutableTreap<X, Y, C> remove(X x) {
 
 		Split<X, Y, C> split = split(x, true);
 		
@@ -52,17 +52,17 @@ public final class Treap<X extends Comparable<X>, Y extends Comparable<Y>, C> {
 		return merge(split.getLesser(), split.getGreater());
 	}
 	
-	public static <X extends Comparable<X>, Y extends Comparable<Y>, C> Treap<X, Y, C> merge(Treap<X, Y, C> less, Treap<X, Y, C> greater) {
+	public static <X extends Comparable<X>, Y extends Comparable<Y>, C> ImmutableTreap<X, Y, C> merge(ImmutableTreap<X, Y, C> less, ImmutableTreap<X, Y, C> greater) {
 	    if (less == null) return greater;
 	    if (greater == null) return less;
 
 	    int c = less.y.compareTo(greater.y);
 	    
 	    if (c >= 0) {
-	        return new Treap<X, Y, C>(less, less.left, merge(less.right, greater));
+	        return new ImmutableTreap<X, Y, C>(less, less.left, merge(less.right, greater));
 	    }
 	    else {
-	        return new Treap<X, Y, C>(greater, merge(less, greater.left), greater.right);
+	        return new ImmutableTreap<X, Y, C>(greater, merge(less, greater.left), greater.right);
 	    }
 	}
 	
@@ -78,10 +78,10 @@ public final class Treap<X extends Comparable<X>, Y extends Comparable<Y>, C> {
 			Split<X, Y, C> rightSplit = this.right != null ? this.right.split(x0, deleteEquals) : null;
 			
 			if (rightSplit != null) {
-				return new Split<X, Y, C>(new Treap<X, Y, C>(this, this.left, rightSplit.getLesser()), rightSplit.getGreater(), rightSplit.getDeleted());
+				return new Split<X, Y, C>(new ImmutableTreap<X, Y, C>(this, this.left, rightSplit.getLesser()), rightSplit.getGreater(), rightSplit.getDeleted());
 			}
 			else {
-				return new Split<X, Y, C>(new Treap<X, Y, C>(this, this.left, null), null, null);
+				return new Split<X, Y, C>(new ImmutableTreap<X, Y, C>(this, this.left, null), null, null);
 			}
 
 		}
@@ -90,17 +90,17 @@ public final class Treap<X extends Comparable<X>, Y extends Comparable<Y>, C> {
 			Split<X, Y, C> leftSplit = this.left != null ? this.left.split(x0, deleteEquals) : null;
 			
 			if (leftSplit != null) {
-				return new Split<X, Y, C>(leftSplit.getLesser(), new Treap<X, Y, C>(this, leftSplit.getGreater(), this.right), leftSplit.getDeleted());
+				return new Split<X, Y, C>(leftSplit.getLesser(), new ImmutableTreap<X, Y, C>(this, leftSplit.getGreater(), this.right), leftSplit.getDeleted());
 			}
 			else {
-				return new Split<X, Y, C>(null, new Treap<X, Y, C>(this, null, this.right), null);
+				return new Split<X, Y, C>(null, new ImmutableTreap<X, Y, C>(this, null, this.right), null);
 			}
 			
 		}
 	
 	}
 	
-	public Treap<X, Y, C> search(X x0) {
+	public ImmutableTreap<X, Y, C> search(X x0) {
 		
 		int c = this.x.compareTo(x0);
 		
