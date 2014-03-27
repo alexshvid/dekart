@@ -2,6 +2,12 @@ package com.shvid.dekart;
 
 import java.util.Random;
 
+/**
+ * 
+ * @author Alex Shvid
+ *
+ */
+
 public class Dekart {
 
 	public static void main(String[] args) {
@@ -16,7 +22,7 @@ public class Dekart {
 		
 		treapR.print(System.out);
 		
-		Split<Integer, Integer, String> split = treapR.split(6, false);
+		ImmutableTreap.Split<Integer, Integer, String> split = treapR.split(6, false);
 		
 		if (split.getLesser() != null) {
 			split.getLesser().print(System.out);
@@ -30,7 +36,23 @@ public class Dekart {
 		putAll(random);
 		
 		System.out.println("Visualization here:\nhttp://cpettitt.github.io/project/dagre-d3/latest/demo/interactive-demo.html");
+	
 		
+		IndexedTreap<Integer, String> it1 = new IndexedTreap<Integer, String>(123, "Hello");
+		IndexedTreap<Integer, String> it2 = new IndexedTreap<Integer, String>(345, "world");
+		IndexedTreap<Integer, String> it3 = new IndexedTreap<Integer, String>(777, "!");
+		
+		IndexedTreap<Integer, String> it = IndexedTreap.merge(IndexedTreap.merge(it1, it2), it3);
+		
+		it = it.remove(0);
+		
+		int size = it.size();
+		
+		System.out.println("size = " + size);
+	   
+		for (int i = 0; i != size; ++i) {
+			System.out.println("i = " + i + ", val = " + it.get(i));
+		}
 	}
 	
 	public static void putAll(Random random) {

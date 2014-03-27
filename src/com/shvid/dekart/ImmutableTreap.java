@@ -2,48 +2,78 @@ package com.shvid.dekart;
 
 import java.io.PrintStream;
 
-public final class ImmutableTreap<X extends Comparable<X>, Y extends Comparable<Y>, C> {
+/**
+ * 
+ * @author Alex Shvid
+ *
+ */
 
-	private final X x;
-	private final Y y;
-	private final C c;
+public final class ImmutableTreap<K extends Comparable<K>, P extends Comparable<P>, V> {
+
+	private final K key;
+	private final P priority;
+	private final V value;
 	
-	private final ImmutableTreap<X, Y, C> left;
-	private final ImmutableTreap<X, Y, C> right;  
+	private final ImmutableTreap<K, P, V> left;
+	private final ImmutableTreap<K, P, V> right;  
 	
-	public ImmutableTreap(X x, Y y, C c) {
-		this.x = x;
-		this.y = y;
-		this.c = c;
+	public ImmutableTreap(K key, P priority, V value) {
+		this.key = key;
+		this.priority = priority;
+		this.value = value;
 		this.left = null;
 		this.right = null;
 	}
 	
-	public ImmutableTreap(ImmutableTreap<X, Y, C> top, ImmutableTreap<X, Y, C> left, ImmutableTreap<X, Y, C> right) {
-		this.x = top.x;
-		this.y = top.y;
-		this.c = top.c;
+	public ImmutableTreap(ImmutableTreap<K, P, V> top, ImmutableTreap<K, P, V> left, ImmutableTreap<K, P, V> right) {
+		this.key = top.key;
+		this.priority = top.priority;
+		this.value = top.value;
 		this.left = left;
 		this.right = right;
 	}
 	
-	public ImmutableTreap<X, Y, C> get(X x) {
-		return search(x);
+	public K getKey() {
+		return key;
 	}
 	
-	public ImmutableTreap<X, Y, C> put(X x, Y y, C c, boolean unique) {
+	public P getPriority() {
+		return priority;
+	}
+	
+	public V getValue() {
+		return value;
+	}
+	
+	public ImmutableTreap<K, P, V> get(K x0) {
 		
-		ImmutableTreap<X, Y, C> el = new ImmutableTreap<X, Y, C>(x, y, c);
+		int c = this.key.compareTo(x0);
 		
-		Split<X, Y, C> split = split(x, unique);
+		if (c == 0) {
+			return this;
+		}
+		else if (c < 0) {
+			return this.right != null ? this.right.get(x0) : null;
+		}
+		else {
+			return this.left != null ? this.left.get(x0) : null;
+		}
+
+	}
+	
+	public ImmutableTreap<K, P, V> put(K key, P priority, V value, boolean unique) {
+		
+		ImmutableTreap<K, P, V> el = new ImmutableTreap<K, P, V>(key, priority, value);
+		
+		Split<K, P, V> split = split(key, unique);
 		
 		return merge(merge(split.getLesser(), el), split.getGreater());
 		
 	}
 	
-	public ImmutableTreap<X, Y, C> remove(X x) {
+	public ImmutableTreap<K, P, V> remove(K x) {
 
-		Split<X, Y, C> split = split(x, true);
+		Split<K, P, V> split = split(x, true);
 		
 		if (split.getDeleted() == null) {
 			return this;
@@ -52,68 +82,52 @@ public final class ImmutableTreap<X extends Comparable<X>, Y extends Comparable<
 		return merge(split.getLesser(), split.getGreater());
 	}
 	
-	public static <X extends Comparable<X>, Y extends Comparable<Y>, C> ImmutableTreap<X, Y, C> merge(ImmutableTreap<X, Y, C> less, ImmutableTreap<X, Y, C> greater) {
+	public static <K extends Comparable<K>, P extends Comparable<P>, V> ImmutableTreap<K, P, V> merge(ImmutableTreap<K, P, V> less, ImmutableTreap<K, P, V> greater) {
 	    if (less == null) return greater;
 	    if (greater == null) return less;
 
-	    int c = less.y.compareTo(greater.y);
+	    int c = less.priority.compareTo(greater.priority);
 	    
 	    if (c >= 0) {
-	        return new ImmutableTreap<X, Y, C>(less, less.left, merge(less.right, greater));
+	        return new ImmutableTreap<K, P, V>(less, less.left, merge(less.right, greater));
 	    }
 	    else {
-	        return new ImmutableTreap<X, Y, C>(greater, merge(less, greater.left), greater.right);
+	        return new ImmutableTreap<K, P, V>(greater, merge(less, greater.left), greater.right);
 	    }
 	}
 	
-	public Split<X, Y, C> split(X x0, boolean deleteEquals) {
+	public Split<K, P, V> split(K x0, boolean deleteEquals) {
 		
-		int c = this.x.compareTo(x0);
+		int c = this.key.compareTo(x0);
 
 		if (c == 0 && deleteEquals) {
-			return new Split<X, Y, C>(this.left, this.right, this);
+			return new Split<K, P, V>(this.left, this.right, this);
 		}
 		if (c <= 0) {
 			
-			Split<X, Y, C> rightSplit = this.right != null ? this.right.split(x0, deleteEquals) : null;
+			Split<K, P, V> rightSplit = this.right != null ? this.right.split(x0, deleteEquals) : null;
 			
 			if (rightSplit != null) {
-				return new Split<X, Y, C>(new ImmutableTreap<X, Y, C>(this, this.left, rightSplit.getLesser()), rightSplit.getGreater(), rightSplit.getDeleted());
+				return new Split<K, P, V>(new ImmutableTreap<K, P, V>(this, this.left, rightSplit.getLesser()), rightSplit.getGreater(), rightSplit.getDeleted());
 			}
 			else {
-				return new Split<X, Y, C>(new ImmutableTreap<X, Y, C>(this, this.left, null), null, null);
+				return new Split<K, P, V>(new ImmutableTreap<K, P, V>(this, this.left, null), null, null);
 			}
 
 		}
 		else {
 			
-			Split<X, Y, C> leftSplit = this.left != null ? this.left.split(x0, deleteEquals) : null;
+			Split<K, P, V> leftSplit = this.left != null ? this.left.split(x0, deleteEquals) : null;
 			
 			if (leftSplit != null) {
-				return new Split<X, Y, C>(leftSplit.getLesser(), new ImmutableTreap<X, Y, C>(this, leftSplit.getGreater(), this.right), leftSplit.getDeleted());
+				return new Split<K, P, V>(leftSplit.getLesser(), new ImmutableTreap<K, P, V>(this, leftSplit.getGreater(), this.right), leftSplit.getDeleted());
 			}
 			else {
-				return new Split<X, Y, C>(null, new ImmutableTreap<X, Y, C>(this, null, this.right), null);
+				return new Split<K, P, V>(null, new ImmutableTreap<K, P, V>(this, null, this.right), null);
 			}
 			
 		}
 	
-	}
-	
-	public ImmutableTreap<X, Y, C> search(X x0) {
-		
-		int c = this.x.compareTo(x0);
-		
-		if (c == 0) {
-			return this;
-		}
-		else if (c < 0) {
-			return this.right != null ? this.right.search(x0) : null;
-		}
-		else {
-			return this.left != null ? this.left.search(x0) : null;
-		}
-
 	}
 	
 	public void print(PrintStream ps) {
@@ -128,7 +142,7 @@ public final class ImmutableTreap<X extends Comparable<X>, Y extends Comparable<
 	
 	private String doPrint(PrintStream ps) {
 
-		String title = "\"" + x + ":" + y + ":" + c + "\"";
+		String title = "\"" + key + ":" + priority + ":" + value + "\"";
 
 		String leftChild = left != null ? left.doPrint(ps) : null;
 		String rightChild = right != null ? right.doPrint(ps) : null;
@@ -142,5 +156,31 @@ public final class ImmutableTreap<X extends Comparable<X>, Y extends Comparable<
 		}
 
 		return title;
+	}
+	
+	public final static class Split<K extends Comparable<K>, P extends Comparable<P>, V> {
+
+		private final ImmutableTreap<K, P, V> lesser;
+		private final ImmutableTreap<K, P, V> greater;  
+		private final ImmutableTreap<K, P, V> deleted;
+		
+		public Split(ImmutableTreap<K, P, V> lesser, ImmutableTreap<K, P, V> greater, ImmutableTreap<K, P, V> deleted) {
+			this.lesser = lesser;
+			this.greater = greater;
+			this.deleted = deleted;
+		}
+
+		public ImmutableTreap<K, P, V> getLesser() {
+			return lesser;
+		}
+
+		public ImmutableTreap<K, P, V> getGreater() {
+			return greater;
+		}
+
+		public ImmutableTreap<K, P, V> getDeleted() {
+			return deleted;
+		}
+
 	}
 }
