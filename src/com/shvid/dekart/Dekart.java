@@ -47,15 +47,27 @@ public class Dekart {
 		
 		treap.print(System.out);
 		
+		System.out.println("2 = " + treap.get(2));
 		treap = treap.remove(2);
+		treap.print(System.out);
+		
+		System.out.println("2 = " + treap.get(2));
 		treap = treap.remove(2);
+		treap.print(System.out);
+		
+		System.out.println("2 = " + treap.get(2));
 		treap = treap.remove(2);
+		
+		treap.print(System.out);
+		System.out.println("2 = " + treap.get(2));
 		
 		System.out.println("T = " + treap);
 		treap = treap.remove(2);
 		System.out.println("T = " + treap);
 		
 		treap.print(System.out);
+		
+		System.out.println("2 = " + treap.get(2));
 		
 	}
 	

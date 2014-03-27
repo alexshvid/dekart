@@ -28,7 +28,7 @@ public final class Treap<X extends Comparable<X>, Y extends Comparable<Y>, C> {
 	}
 	
 	public Treap<X, Y, C> get(X x) {
-		return null;
+		return search(x);
 	}
 	
 	public Treap<X, Y, C> put(X x, Y y, C c, boolean unique) {
@@ -98,6 +98,22 @@ public final class Treap<X extends Comparable<X>, Y extends Comparable<Y>, C> {
 			
 		}
 	
+	}
+	
+	public Treap<X, Y, C> search(X x0) {
+		
+		int c = this.x.compareTo(x0);
+		
+		if (c == 0) {
+			return this;
+		}
+		else if (c < 0) {
+			return this.right != null ? this.right.search(x0) : null;
+		}
+		else {
+			return this.left != null ? this.left.search(x0) : null;
+		}
+
 	}
 	
 	public void print(PrintStream ps) {
