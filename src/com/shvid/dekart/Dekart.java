@@ -37,15 +37,26 @@ public class Dekart {
 		
 		Treap<Integer, Integer, String> treap = new Treap<Integer, Integer, String>(7, 555, "first");
 
-		for (int i = 0; i != 20; ++i) {
+		for (int i = 0; i != 5; ++i) {
 			int y = random.nextInt(1000);
-			treap = treap.put(i, y, "loop" + i, true);
+			treap = treap.put(i, y, "loop" + i, false);
 		}
 		
-		treap = treap.put(2, 333, "double", true);
-		//treap = treap.put(2, 777, "triple", true);
+		treap = treap.put(2, 333, "double", false);
+		treap = treap.put(2, 777, "triple", false);
 		
 		treap.print(System.out);
+		
+		treap = treap.remove(2);
+		treap = treap.remove(2);
+		treap = treap.remove(2);
+		
+		System.out.println("T = " + treap);
+		treap = treap.remove(2);
+		System.out.println("T = " + treap);
+		
+		treap.print(System.out);
+		
 	}
 	
 }

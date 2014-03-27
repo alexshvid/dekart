@@ -27,6 +27,10 @@ public final class Treap<X extends Comparable<X>, Y extends Comparable<Y>, C> {
 		this.right = right;
 	}
 	
+	public Treap<X, Y, C> get(X x) {
+		return null;
+	}
+	
 	public Treap<X, Y, C> put(X x, Y y, C c, boolean unique) {
 		
 		Treap<X, Y, C> el = new Treap<X, Y, C>(x, y, c);
@@ -35,6 +39,17 @@ public final class Treap<X extends Comparable<X>, Y extends Comparable<Y>, C> {
 		
 		return merge(merge(split.getLesser(), el), split.getGreater());
 		
+	}
+	
+	public Treap<X, Y, C> remove(X x) {
+
+		Split<X, Y, C> split = split(x, true);
+		
+		if (split.getDeleted() == null) {
+			return this;
+		}
+		
+		return merge(split.getLesser(), split.getGreater());
 	}
 	
 	public static <X extends Comparable<X>, Y extends Comparable<Y>, C> Treap<X, Y, C> merge(Treap<X, Y, C> less, Treap<X, Y, C> greater) {
@@ -54,28 +69,32 @@ public final class Treap<X extends Comparable<X>, Y extends Comparable<Y>, C> {
 	public Split<X, Y, C> split(X x0, boolean deleteEquals) {
 		
 		int c = this.x.compareTo(x0);
-		
+
 		if (c == 0 && deleteEquals) {
-			return new Split<X, Y, C>(this.left, this.right);
+			return new Split<X, Y, C>(this.left, this.right, this);
 		}
-		else if (c <= 0) {
+		if (c <= 0) {
 			
 			Split<X, Y, C> rightSplit = this.right != null ? this.right.split(x0, deleteEquals) : null;
 			
-			Treap<X, Y, C> rightLesserX = rightSplit != null ? rightSplit.getLesser() : null;
-			Treap<X, Y, C> rightGreaterX = rightSplit != null ? rightSplit.getGreater() : null;
-
-			return new Split<X, Y, C>(new Treap<X, Y, C>(this, this.left, rightLesserX), rightGreaterX);
+			if (rightSplit != null) {
+				return new Split<X, Y, C>(new Treap<X, Y, C>(this, this.left, rightSplit.getLesser()), rightSplit.getGreater(), rightSplit.getDeleted());
+			}
+			else {
+				return new Split<X, Y, C>(new Treap<X, Y, C>(this, this.left, null), null, null);
+			}
 
 		}
 		else {
 			
 			Split<X, Y, C> leftSplit = this.left != null ? this.left.split(x0, deleteEquals) : null;
 			
-			Treap<X, Y, C> leftLesserX = leftSplit != null ? leftSplit.getLesser() : null;
-			Treap<X, Y, C> leftGreaterX = leftSplit != null ? leftSplit.getGreater() : null;
-			
-			return new Split<X, Y, C>(leftLesserX, new Treap<X, Y, C>(this, leftGreaterX, this.right));
+			if (leftSplit != null) {
+				return new Split<X, Y, C>(leftSplit.getLesser(), new Treap<X, Y, C>(this, leftSplit.getGreater(), this.right), leftSplit.getDeleted());
+			}
+			else {
+				return new Split<X, Y, C>(null, new Treap<X, Y, C>(this, null, this.right), null);
+			}
 			
 		}
 	
